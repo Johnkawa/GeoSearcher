@@ -1,6 +1,7 @@
 
 package personal.john.app;
 
+import personal.john.app.db.GeoSearcherDB;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,11 +23,11 @@ public class MemoActivity extends Activity implements OnClickListener {
     private GeoSearcherDB mDatabaseObject;
 
     // メイン画面情報
-    private String mHotelID = "";
+    private String mHotelID;
 
-    private int mArrived = 0;
+    private int mArrived;
 
-    private String mMemo = "";
+    private String mMemo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

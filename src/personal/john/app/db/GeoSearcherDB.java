@@ -1,5 +1,5 @@
 
-package personal.john.app;
+package personal.john.app.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -38,7 +38,7 @@ public class GeoSearcherDB {
         try {
             mDb = dbGeoOpenHelper.getWritableDatabase();
         } catch (SQLException e) {
-            Log.e("app", e.toString());
+            Log.e("GeoSearcherDB", e.toString());
             mDb = dbGeoOpenHelper.getReadableDatabase();
         }
     }

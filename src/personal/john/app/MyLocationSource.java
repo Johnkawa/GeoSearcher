@@ -23,15 +23,15 @@ public class MyLocationSource implements LocationSource, LocationListener, Conne
 
     private final static int LOCATION_SMALLEST_DISPLACEMENT_METER = 10;
 
-    private LocationManager mLocMgr = null; // 位置マネージャ
+    private LocationManager mLocMgr; // 位置マネージャ
 
-    private LocationClient mLocClient = null;
+    private LocationClient mLocClient;
     
     private static MainActivity mActivity;
 
     private boolean mReconnect = false;
 
-    private OnLocationChangedListener mSourceListener = null;
+    private OnLocationChangedListener mSourceListener;
 
     private LocationListener mGpsListener = new LocationListener() {
 
@@ -79,13 +79,13 @@ public class MyLocationSource implements LocationSource, LocationListener, Conne
         try {
             mLocClient.removeLocationUpdates(this);
         } catch (Exception e) {
-            Log.e("MyLocationSource:stop", e.toString());
+            Log.e("MyLocationSource", e.toString());
         }
         mLocClient.disconnect();
         try {
             mLocMgr.removeUpdates(mGpsListener);
         } catch (Exception e) {
-            Log.e("MyLocationSource:stop", e.toString());
+            Log.e("MyLocationSource", e.toString());
         }
     }
 

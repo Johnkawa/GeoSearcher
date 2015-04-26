@@ -1,9 +1,14 @@
 
-package personal.john.app;
+package personal.john.app.rakutenclient;
 
 import java.io.IOException;
 
 import org.xml.sax.SAXException;
+
+import personal.john.app.MainActivity;
+import personal.john.app.R;
+import personal.john.app.ResultListView;
+import personal.john.app.R.string;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +16,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 
 public class RakutenClientExecuteThread extends AsyncTask<RakutenClient, Void, Void> {
-    private Activity mActivity = null;
+    private Activity mActivity;
 
     private static final String MODE_NORMAL = "Normal";
 

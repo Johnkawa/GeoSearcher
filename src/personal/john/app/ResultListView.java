@@ -9,6 +9,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import personal.john.app.db.GeoSearcherDB;
+import personal.john.app.rakutenclient.RakutenClient;
+import personal.john.app.rakutenclient.RakutenClientReceiver;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,7 +30,7 @@ import android.widget.ListView;
 
 public class ResultListView extends Activity implements OnClickListener, RakutenClientReceiver {
     // 楽天クライアント
-    private RakutenClient mRakutenClient = null;
+    private RakutenClient mRakutenClient;
 
     // DB用オブジェクト
     private GeoSearcherDB mDatabaseObject;
@@ -34,7 +38,7 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
     // 画面パーツ
     ListView mListView;
 
-    ArrayList<HotelInfo> mTargetList = null;
+    ArrayList<HotelInfo> mTargetList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +147,7 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
     }
 
     @Override
-    public void receiveHotel(ArrayList<HotelInfo> infoList) {
+    public void onReceiveHotel(ArrayList<HotelInfo> infoList) {
         if (mTargetList != null) {
             mTargetList.clear();
         }
@@ -151,7 +155,7 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
     }
 
     @Override
-    public void receiveError(int id) {
+    public void onReceiveError(int id) {
         switch (id) {
             case RakutenClient.ERROR_GENERAL:
                 break;
@@ -181,16 +185,16 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
         for (int iTargetCount = 0; iTargetCount < mTargetList.size(); iTargetCount++) {
             final MyCustomListData tmpItem = new MyCustomListData();
 
-            double destLat = Double.valueOf(mTargetList.get(iTargetCount).getLatitude());
-            double destLon = Double.valueOf(mTargetList.get(iTargetCount).getLongitude());
+            double destLat = Double.valueOf(mTargetList.get(iTargetCount).mLatitude);
+            double destLon = Double.valueOf(mTargetList.get(iTargetCount).mLongitude);
             mTargetList.get(iTargetCount).setDistance(mRakutenClient.getmMyLatitute(),
                     mRakutenClient.getmMyLongitude(), destLat, destLon);
 
-            tmpItem.setHotelName(mTargetList.get(iTargetCount).getName());
-            tmpItem.setHotelInfo(mTargetList.get(iTargetCount).getSpecial());
+            tmpItem.setHotelName(mTargetList.get(iTargetCount).mName);
+            tmpItem.setHotelInfo(mTargetList.get(iTargetCount).mSpecial);
             tmpItem.setHotelDistance("ここから " + Integer.toString(Math.round(mTargetList.get(iTargetCount)
-                    .getDistance())) + "m");
-            tmpItem.setHotelMinCharge("価格：" + mTargetList.get(iTargetCount).getHotelMinCharge() + "円 ～");
+                    .mDistance)) + "m");
+            tmpItem.setHotelMinCharge("価格：" + mTargetList.get(iTargetCount).mHotelMinCharge + "円 ～");
             object.add(tmpItem);
         }
 
@@ -207,7 +211,7 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
                 };
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(ResultListView.this);
-                dialog.setTitle(mTargetList.get(iTargetListIndex).getName());
+                dialog.setTitle(mTargetList.get(iTargetListIndex).mName);
 
                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
@@ -215,7 +219,7 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
                         switch (which) {
                             case 0: // 電話
                                 String strTelphoneNo = "tel:"
-                                        + mTargetList.get(iTargetListIndex).getTelephoneNo();
+                                        + mTargetList.get(iTargetListIndex).mTelephoneNo;
                                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri
                                         .parse(strTelphoneNo));
                                 startActivity(intent);
@@ -224,8 +228,8 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
                                 String url = "http://maps.google.com/maps?dirflg=w";
                                 url += "&saddr=" + mRakutenClient.getmMyLatitute() + ","
                                         + mRakutenClient.getmMyLongitude() + "(現在地)";
-                                url += "&daddr=" + mTargetList.get(iTargetListIndex).getLatitude()
-                                        + "," + mTargetList.get(iTargetListIndex).getLongitude()
+                                url += "&daddr=" + mTargetList.get(iTargetListIndex).mLatitude
+                                        + "," + mTargetList.get(iTargetListIndex).mLongitude
                                         + "(目的地)";
 
                                 Intent intentRote = new Intent();
@@ -237,9 +241,9 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
                                 break;
                             case 2: // メモ
                                 String[] strInfo = {
-                                        mTargetList.get(iTargetListIndex).getNo(), "0", ""
+                                        mTargetList.get(iTargetListIndex).mNo, "0", ""
                                 };
-                                String strHotelId = mTargetList.get(iTargetListIndex).getNo();
+                                String strHotelId = mTargetList.get(iTargetListIndex).mNo;
                                 mDatabaseObject.openGeoSearcherDB();
                                 if (mDatabaseObject.readArrivedData(strHotelId) != 0)
                                     strInfo[1] = "1";
@@ -256,7 +260,7 @@ public class ResultListView extends Activity implements OnClickListener, Rakuten
                             case 3: // 楽天Webページを開く
                                 Intent intentWeb = new Intent(Intent.ACTION_VIEW,
                                         Uri.parse(mTargetList.get(iTargetListIndex)
-                                                .getInfomationUrl()));
+                                                .mInfomationUrl));
                                 startActivity(intentWeb);
                             default:
                         }

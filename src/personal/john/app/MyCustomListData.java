@@ -4,15 +4,15 @@ package personal.john.app;
 import android.graphics.Bitmap;
 
 public class MyCustomListData {
-    private Bitmap mHotelImg = null;
+    private Bitmap mHotelImg;
 
-    private String mHotelName = null;
+    private String mHotelName;
 
-    private String mHotelInfo = null;
+    private String mHotelInfo;
 
-    private String mHotelDistance = null;
+    private String mHotelDistance;
     
-    private String mHotelMinCharge = null;
+    private String mHotelMinCharge;
 
     public void setHotelImage(Bitmap result) {
         mHotelImg = result;

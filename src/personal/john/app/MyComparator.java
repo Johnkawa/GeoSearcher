@@ -42,18 +42,18 @@ public class MyComparator implements Comparator<HotelInfo> {
 
         switch (mode) {
             case MODE_HOTELNAME:
-                return ((Comparable) lhs.getName()).compareTo((Comparable) rhs.getName()) * sort;
+                return ((Comparable) lhs.mName).compareTo((Comparable) rhs.mName) * sort;
             case MODE_DISTANCE:
-                return ((Comparable) lhs.getDistance()).compareTo((Comparable) rhs.getDistance())
+                return ((Comparable) lhs.mDistance).compareTo((Comparable) rhs.mDistance)
                         * sort;
             case MODE_MINCHARGE:
-                return ((Comparable) lhs.getHotelMinCharge()).compareTo((Comparable) rhs
-                        .getHotelMinCharge()) * sort;
+                return ((Comparable) lhs.mHotelMinCharge).compareTo((Comparable) rhs
+                        .mHotelMinCharge) * sort;
             case MODE_VACANT:
-                return ((Comparable) lhs.getVacant()).compareTo((Comparable) rhs.getVacant())
+                return ((Comparable) lhs.mVacant).compareTo((Comparable) rhs.mVacant)
                         * sort;
             default:
-                return ((Comparable) lhs.getName()).compareTo((Comparable) rhs.getName()) * sort;
+                return ((Comparable) lhs.mName).compareTo((Comparable) rhs.mName) * sort;
         }
     }
 }

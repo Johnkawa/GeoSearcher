@@ -1,4 +1,3 @@
-
 package personal.john.app;
 
 import java.util.List;
@@ -7,17 +6,24 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MyCustomListAdapter extends ArrayAdapter<MyCustomListData> {
     private static LayoutInflater layoutInflater;
     private static int selectedPosition = -1;
-    private static Context context;
+    private Context context;
+    
+    private static class ViewHolder {
+        ImageView imageView;
+        TextView textViewHotelName;
+        TextView textViewHotelInfo;
+        TextView textViewHotelDistance;
+        TextView textViewHotelMinCharge;
 
+    }
+    
     public MyCustomListAdapter(Context context, int viewResourceId, List<MyCustomListData> objects) {
         super(context, viewResourceId, objects);
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -26,6 +32,7 @@ public class MyCustomListAdapter extends ArrayAdapter<MyCustomListData> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
         View cv = convertView;
         
         // 特定の行(position)のデータを得る
@@ -34,27 +41,31 @@ public class MyCustomListAdapter extends ArrayAdapter<MyCustomListData> {
         // リスト用のレイアウトを初回のみ作成
         if (cv == null) {
             cv = layoutInflater.inflate(R.layout.result_listitem, null);
+            holder = new ViewHolder();
+            holder.imageView = (ImageView) cv.findViewById(R.id.listImg);
+            holder.textViewHotelName = (TextView) cv.findViewById(R.id.listHotelName);
+            holder.textViewHotelInfo = (TextView) cv.findViewById(R.id.listHotelInfo);
+            holder.textViewHotelDistance = (TextView) cv.findViewById(R.id.listHotelDistance);
+            holder.textViewHotelMinCharge = (TextView) cv.findViewById(R.id.listHotelMinCharge);
+            cv.setTag(holder);
+        } else {
+            holder = (ViewHolder) cv.getTag();
         }
 
         // イメージ画像のセット
-        ImageView imageView = (ImageView) cv.findViewById(R.id.listImg);
-        imageView.setImageBitmap(item.getHotelImage());
+        holder.imageView.setImageBitmap(item.getHotelImage());
 
         // ホテル名のセット
-        TextView listNameTextView = (TextView) cv.findViewById(R.id.listHotelName);
-        listNameTextView.setText(item.getHotelName());
+        holder.textViewHotelName.setText(item.getHotelName());
 
         // ホテル情報のセット
-        TextView listInfoTextView = (TextView) cv.findViewById(R.id.listHotelInfo);
-        listInfoTextView.setText(item.getHotelInfo());
+        holder.textViewHotelInfo.setText(item.getHotelInfo());
 
         // 現在地からホテルまでの距離
-        TextView listDistanceTextView = (TextView) cv.findViewById(R.id.listHotelDistance);
-        listDistanceTextView.setText(item.getHotelDistance());
+        holder.textViewHotelDistance.setText(item.getHotelDistance());
 
         // ホテルの再安値のセット
-        TextView listMinChargeTextView = (TextView) cv.findViewById(R.id.listHotelMinCharge);
-        listMinChargeTextView.setText(item.getHotelMinCharge());
+        holder.textViewHotelMinCharge.setText(item.getHotelMinCharge());
         
         if (selectedPosition > -1) {
             if (position == selectedPosition) {

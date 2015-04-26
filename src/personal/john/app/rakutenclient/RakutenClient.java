@@ -1,5 +1,5 @@
 
-package personal.john.app;
+package personal.john.app.rakutenclient;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,13 +13,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import personal.john.app.HotelInfo;
+
 import android.app.Activity;
 import android.util.Log;
 
 public class RakutenClient {
     private static final String LOG_TAG = "RakutenClient";
 
-    private static final String LOG_HOTEL = "RakutenClientHotel";
+    private static final String LOG_HOTEL = "HotelHandler";
 
     private static final String API_URI = "http://api.rakuten.co.jp/rws/3.0/rest?";
 
@@ -47,15 +49,15 @@ public class RakutenClient {
     
 
     // private static String mAccessKey = null;
-    private SAXParser mParser = null;
+    private SAXParser mParser;
 
-    private RakutenClientReceiver mRakutenClientReceiver = null;
+    private RakutenClientReceiver mRakutenClientReceiver;
 
-    private HotelHandler mHotelHandler = null;
+    private HotelHandler mHotelHandler;
 
     private String mRecordCount = "0";
 
-    private Activity mActivity = null;
+    private Activity mActivity;
 
     public static final int ERROR_GENERAL = 1;
 
@@ -79,7 +81,7 @@ public class RakutenClient {
 
     private double mMyLongitude = 0;
 
-    private double mRange;
+    private double mRange = 1;
 
     public RakutenClient(RakutenClientReceiver receiver, Activity activity)
             throws ParserConfigurationException, SAXException {
@@ -87,7 +89,6 @@ public class RakutenClient {
         mParser = factory.newSAXParser();
         mRakutenClientReceiver = receiver;
         mHotelHandler = new HotelHandler();
-        mRange = 1;
         mActivity = activity;
     }
 
@@ -152,11 +153,11 @@ public class RakutenClient {
     }
 
     class HotelHandler extends DefaultHandler {
-        private ArrayList<HotelInfo> mInfoList = null;
+        private ArrayList<HotelInfo> mInfoList;
 
-        private HotelInfo mHotelInfo = null;
+        private HotelInfo mHotelInfo;
 
-        private String mText = null;
+        private String mText;
 
         private boolean mOnCatchText = false;
 
@@ -167,7 +168,7 @@ public class RakutenClient {
 
         public void endDocument() {
             Log.d(LOG_HOTEL, "endDocument");
-            mRakutenClientReceiver.receiveHotel(mInfoList);
+            mRakutenClientReceiver.onReceiveHotel(mInfoList);
             mInfoList = null;
         }
 
@@ -217,43 +218,43 @@ public class RakutenClient {
                 setRecordCount(mText);
                 mOnCatchText = false;
             } else if (localName.equals("hotelNo")) {
-                mHotelInfo.setNo(mText);
+                mHotelInfo.mNo = mText;
                 mOnCatchText = false;
             } else if (localName.equals("hotelName")) {
-                mHotelInfo.setName(mText);
+                mHotelInfo.mName = mText;
                 mOnCatchText = false;
             } else if (localName.equals("hotelKanaName")) {
-                mHotelInfo.setKanaName(mText);
+                mHotelInfo.mKanaName = mText;
                 mOnCatchText = false;
             } else if (localName.equals("latitude")) {
-                mHotelInfo.setLatitude(mText);
+                mHotelInfo.mLatitude = mText;
                 mOnCatchText = false;
             } else if (localName.equals("longitude")) {
-                mHotelInfo.setLongitude(mText);
+                mHotelInfo.mLongitude = mText;
                 mOnCatchText = false;
             } else if (localName.equals("hotelInformationUrl")) {
-                mHotelInfo.setInfomationUrl(mText);
+                mHotelInfo.mInfomationUrl = mText;
                 mOnCatchText = false;
             } else if (localName.equals("planListUrl")) {
-                mHotelInfo.setPlanListUrl(mText);
+                mHotelInfo.mPlanListUrl = mText;
                 mOnCatchText = false;
             } else if (localName.equals("telephoneNo")) {
-                mHotelInfo.setTelephoneNo(mText);
+                mHotelInfo.mTelephoneNo = mText;
                 mOnCatchText = false;
             } else if (localName.equals("hotelSpecial")) {
-                mHotelInfo.setSpecial(mText);
+                mHotelInfo.mSpecial = mText;
                 mOnCatchText = false;
             } else if (localName.equals("address1")) {
-                mHotelInfo.setAddress1(mText);
+                mHotelInfo.mAddress1 = mText;
                 mOnCatchText = false;
             } else if (localName.equals("address2")) {
-                mHotelInfo.setAddress2(mText);
+                mHotelInfo.mAddress2 = mText;
                 mOnCatchText = false;
             } else if (localName.equals("hotelMinCharge")) {
-                mHotelInfo.setHotelMinCharge(mText);
+                mHotelInfo.mHotelMinCharge = mText;
                 mOnCatchText = false;
             } else if (localName.equals("roomName")) {
-                mHotelInfo.setVacant(true);
+                mHotelInfo.mVacant = true;
                 mOnCatchText = false;
             }
         }
@@ -271,7 +272,7 @@ public class RakutenClient {
             mHotelInfo = null;
             mInfoList.clear();
             mInfoList = null;
-            mRakutenClientReceiver.receiveError(ERROR_GENERAL);
+            mRakutenClientReceiver.onReceiveError(ERROR_GENERAL);
         }
 
         public void fatalError(SAXParseException e) {
@@ -280,7 +281,7 @@ public class RakutenClient {
             mHotelInfo = null;
             mInfoList.clear();
             mInfoList = null;
-            mRakutenClientReceiver.receiveError(ERROR_GENERAL);
+            mRakutenClientReceiver.onReceiveError(ERROR_GENERAL);
         }
 
         public void warning(SAXParseException e) {
